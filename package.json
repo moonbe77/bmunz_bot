@@ -1,0 +1,26 @@
+{
+  "name": "bmunz_bot",
+  "version": "1.0.0",
+  "description": "bot using digiflow for bmunx ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./index.js"
+  },
+  "keywords": [
+    "express.js",
+    "dialogflow",
+    "bot",
+    "node"
+  ],
+  "author": "Bernardo Munz",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nickname": "^0.0.1",
+    "socket.io": "^4.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
