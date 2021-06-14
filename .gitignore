@@ -1,2 +1,7 @@
 /node_modules
-/functions
+
+#firebase functions
+/functions/service-account.json
+
+#firebase cache
+.firebase/
