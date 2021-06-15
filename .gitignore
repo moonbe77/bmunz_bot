@@ -2,6 +2,7 @@
 
 #firebase functions
 /functions/service-account.json
+functions/firebase-debug.log
 
 #firebase cache
 .firebase/
