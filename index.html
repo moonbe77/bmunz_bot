@@ -3,6 +3,7 @@
 
 <head>
   <title>Socket.IO chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
@@ -107,13 +108,13 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
     var socket = io();
-
+      socket.emit('bot', 'hello');
     var messages = document.getElementById('messages');
     var form = document.getElementById('form');
     var input = document.getElementById('input');
     var connections = document.querySelector('#connections');
     var users = document.querySelector('#users');
-        users.innerText = " loading users"
+      users.innerText = " loading users"
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -121,7 +122,7 @@
         const item = document.createElement('li')
         item.classList.add('myMessage');
         item.innerText = input.value;
-        socket.emit('chat message', input.value);
+        socket.emit('bot', input.value);
         messages.appendChild(item)
         input.value = '';
       }
@@ -129,8 +130,9 @@
 
     socket.on('chat message', function (payload) {
       console.log(payload);
+
       var item = document.createElement('li');
-      item.textContent = `${payload.user.nick}: ${payload.message}`;
+      item.textContent = `${payload.user?.nick}: ${payload.message}`;
       messages.appendChild(item);
       window.scrollTo(0, document.body.scrollHeight);
     });
@@ -138,11 +140,24 @@
     socket.on('stats', function (payload) {
       connections.innerText = payload.connections || 0
       let usersList = '';
-      payload.users.map(u =>   usersList += `${u}, `  )
-      
+      payload.users.map(u => usersList += `${u}, `)
+
       users.innerText = usersList || 'none'
     });
-    
+
+      socket.on('bot', function (payload) {
+        console.log(payload);
+        var item = document.createElement('li');
+        if (payload.parameters?.color) {
+          console.log(payload.parameters.color.stringValue);
+          item.style.color = payload.parameters.color.stringValue
+        }
+
+        item.textContent = `${payload.user?.nick | 'no name'}: ${payload.message}`;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      })
+
   </script>
 </body>
 

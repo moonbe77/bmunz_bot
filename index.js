@@ -4,10 +4,35 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
+const fetch = require('node-fetch');
 var nickname = require('nickname');
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
+});
+
+app.get('/bot', async (req, res) => {
+  fetch('http://localhost:5001/bmunz-316708/us-central1/dialogflowGateway', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "sessionId": "berny",
+      "queryInput": {
+        "text": {
+          "text": "howdy",
+          "languageCode": "en-US"
+        }
+      }
+    })
+  })
+    .then(data => data.json())
+    .then(parse => {
+      console.log(parse);
+    })
+
+  res.json({ message: 'fetched' })
 });
 
 let usersConnected = []
@@ -22,7 +47,6 @@ io.on('connection', (socket) => {
     id: socket.id,
     nick: nickname.random()
   })
-  console.log(usersConnected);
 
   const payload = {
     message: 'joined the chat',
@@ -32,19 +56,40 @@ io.on('connection', (socket) => {
 })
 
 io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
+  socket.on('bot', (msg) => {    
+    console.log(msg);
 
-    const payload = {
-      message: msg,
-      user: getUserData(socket.id)
-    }
+    fetch('http://localhost:5001/bmunz-316708/us-central1/dialogflowGateway', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "sessionId": socket.id,
+        "queryInput": {
+          "text": {
+            "text": msg,
+            "languageCode": "en-US"
+          }
+        }
+      })
+    })
+      .then(data => data.json())
+      .then(fullfil => {
+        const payload = {
+          message: fullfil.fulfillmentText,
+          parameters: fullfil.parameters.fields
+        }
 
-    socket.broadcast.emit('chat message', payload);
+        socket.emit('bot', payload);
+      })
+      .catch(err => {
+        console.log(err);
+      })
   });
 });
 
 io.on('connection', (socket) => {
-
   const payload = {
     connections: usersConnected.length,
     users: usersConnected.map(user => user.nick) || []
@@ -52,6 +97,13 @@ io.on('connection', (socket) => {
 
   io.emit('stats', payload);
 });
+
+
+
+
+
+
+
 
 server.listen(3000, () => {
   console.log('listening on localhost:3000');
