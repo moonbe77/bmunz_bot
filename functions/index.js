@@ -9,6 +9,7 @@ admin.initializeApp({
 });
 
 const { SessionsClient } = require("dialogflow");
+const { WebhookClient } = require('dialogflow-fulfillment');
 
 exports.dialogflowGateway = functions.https.onRequest((request, response) => {
   cors(request, response, async () => {
@@ -21,16 +22,34 @@ exports.dialogflowGateway = functions.https.onRequest((request, response) => {
     result.fulfillmentText
     response.send(result);
   })
-
-
 })
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+// exports.dialogflowHook = functions.https.onRequest((request, response) => {
+
+//   const agent = new WebhookClient({ request, response });
+//   console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
+//   function welcome(agent) {
+//     agent.add(`Welcome to my agent!`);
+//   }
+
+//   let intentMap = new Map();
+//   intentMap.set('Default Welcome Intent', welcome);
+//   intentMap.set('Default Fallback Intent', fallback);
+//   agent.handleRequest(intentMap);
+
+//   // cors(request, response, async () => {
+//   //   const { queryInput, sessionId } = request.body
+//   //   const sessionClient = new SessionsClient({ credentials: serviceAccount });
+//   //   const session = sessionClient.sessionPath('bmunz-316708', sessionId);
+//   //   const responses = await sessionClient.detectIntent({ session, queryInput });
+
+
+
+//   //   // const result = responses[0].queryResult;
+//   //   // result.fulfillmentText
+
+//   //   response.send('done');
+//   // })
+// })
 
 
