@@ -145,11 +145,11 @@
       users.innerText = usersList || 'none'
     });
 
-      socket.on('bot', function (payload) {
-        console.log(payload);
+          socket.on('bot', function (payload) {
         var item = document.createElement('li');
         if (payload.parameters?.color) {
           console.log(payload.parameters.color.stringValue);
+          localStorage.setItem('textColor', payload.parameters.color.stringValue);
           item.style.color = payload.parameters.color.stringValue
         }
 
@@ -157,7 +157,11 @@
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       })
-
+</script>
+<script>
+  if (localStorage.getItem('textColor')) {
+    document.body.style.color = localStorage.getItem('textColor')
+  }
   </script>
 </body>
 
