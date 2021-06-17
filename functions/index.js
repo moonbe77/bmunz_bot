@@ -9,20 +9,20 @@ admin.initializeApp({
 });
 
 const { SessionsClient } = require("dialogflow");
-const { WebhookClient } = require('dialogflow-fulfillment');
+// const { WebhookClient } = require('dialogflow-fulfillment');
 
 exports.dialogflowGateway = functions.https.onRequest((request, response) => {
-  cors(request, response, async () => {
-    const { queryInput, sessionId } = request.body
+  cors(request, response, async function () {
+    const { queryInput, sessionId } = request.body;
     const sessionClient = new SessionsClient({ credentials: serviceAccount });
-    const session = sessionClient.sessionPath('bmunz-316708', sessionId);
+    const session = sessionClient.sessionPath("bmunz-316708", sessionId);
     const responses = await sessionClient.detectIntent({ session, queryInput });
 
     const result = responses[0].queryResult;
-    result.fulfillmentText
+    result.fulfillmentText;
     response.send(result);
-  })
-})
+  });
+});
 
 // exports.dialogflowHook = functions.https.onRequest((request, response) => {
 
@@ -42,7 +42,6 @@ exports.dialogflowGateway = functions.https.onRequest((request, response) => {
 //   //   const sessionClient = new SessionsClient({ credentials: serviceAccount });
 //   //   const session = sessionClient.sessionPath('bmunz-316708', sessionId);
 //   //   const responses = await sessionClient.detectIntent({ session, queryInput });
-
 
 
 //   //   // const result = responses[0].queryResult;
