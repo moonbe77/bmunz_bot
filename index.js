@@ -1,14 +1,51 @@
+const { WebhookClient } = require('dialogflow-fulfillment');
 const express = require('express');
+const bodyParser = require('body-parser')
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 const fetch = require('node-fetch');
-var nickname = require('nickname');
+const nickname = require('nickname');
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }));
+
+function welcome(agent) {
+  agent.add(`Welcome to Express.JS webhook!`);
+}
+
+function fallback(agent) {
+  agent.add(`I didn't understand`);
+  agent.add(`I'm sorry, can you try again?`);
+}
+
+function contactDetails(agent) {
+  agent.add(`munzbe@gmail.com`);
+  agent.add(`+61 481 129 786`);
+  agent.add(`linkedin`);
+  agent.add(`twitter`);
+}
+
+function WebhookProcessing(req, res) {
+  const agent = new WebhookClient({ request: req, response: res });
+  console.info(`agent set`);
+
+  let intentMap = new Map();
+  intentMap.set('Default Welcome Intent', welcome);
+  intentMap.set('Default Fallback Intent', fallback);
+  intentMap.set('contact.details', contactDetails);
+  agent.handleRequest(intentMap);
+}
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
+});
+
+app.post('/test', (req, res) => {
+  console.info(`\n\n>>>>>>> S E R V E R   H I T <<<<<<<`);
+  WebhookProcessing(req, res);
 });
 
 app.get('/bot', async (req, res) => {
@@ -56,7 +93,7 @@ io.on('connection', (socket) => {
 })
 
 io.on('connection', (socket) => {
-  socket.on('bot', (msg) => {    
+  socket.on('bot', (msg) => {
     console.log(msg);
 
     fetch('http://localhost:5001/bmunz-316708/us-central1/dialogflowGateway', {
@@ -97,11 +134,6 @@ io.on('connection', (socket) => {
 
   io.emit('stats', payload);
 });
-
-
-
-
-
 
 
 

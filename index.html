@@ -97,6 +97,7 @@
 </head>
 
 <body>
+
   <div class="stats">
     <div id="connections"></div>
     <div id="users"></div>
@@ -145,23 +146,24 @@
       users.innerText = usersList || 'none'
     });
 
-          socket.on('bot', function (payload) {
+        socket.on('bot', function (payload) {
+        console.log(payload);
         var item = document.createElement('li');
-        if (payload.parameters?.color) {
-          console.log(payload.parameters.color.stringValue);
-          localStorage.setItem('textColor', payload.parameters.color.stringValue);
-          item.style.color = payload.parameters.color.stringValue
+        if (payload.parameters?.text_color) {
+          console.log(payload.parameters.text_color.stringValue);
+          localStorage.setItem('textColor', payload.parameters.text_color.stringValue);
+          item.style.color = payload.parameters.text_color.stringValue
         }
 
         item.textContent = `${payload.user?.nick | 'no name'}: ${payload.message}`;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       })
-</script>
-<script>
-  if (localStorage.getItem('textColor')) {
-    document.body.style.color = localStorage.getItem('textColor')
-  }
+      </script>
+      <script>
+        if (localStorage.getItem('textColor')) {
+          document.body.style.color = localStorage.getItem('textColor')
+        }
   </script>
 </body>
 
