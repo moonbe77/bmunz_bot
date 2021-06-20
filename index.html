@@ -103,19 +103,21 @@
     <div id="users"></div>
   </div>
   <ul id="messages"></ul>
+    <div id='suggestions'></div>
   <form id="form" action="">
     <input id="input" autocomplete="off" /><button>Send</button>
   </form>
   <script src="/socket.io/socket.io.js"></script>
   <script>
     var socket = io();
-      socket.emit('bot', 'hello');
+    socket.emit('bot', 'hello');
     var messages = document.getElementById('messages');
     var form = document.getElementById('form');
     var input = document.getElementById('input');
     var connections = document.querySelector('#connections');
     var users = document.querySelector('#users');
-      users.innerText = " loading users"
+    var suggestions = document.querySelector('#suggestions');
+    users.innerText = " loading users"
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -146,24 +148,36 @@
       users.innerText = usersList || 'none'
     });
 
-        socket.on('bot', function (payload) {
-        console.log(payload);
-        var item = document.createElement('li');
-        if (payload.parameters?.text_color) {
-          console.log(payload.parameters.text_color.stringValue);
-          localStorage.setItem('textColor', payload.parameters.text_color.stringValue);
-          item.style.color = payload.parameters.text_color.stringValue
-        }
+    socket.on('bot', function (payload) {
+      var item = document.createElement('li');
+      if (payload.parameters?.text_color) {
+        console.log(payload.parameters.text_color.stringValue);
+        localStorage.setItem('textColor', payload.parameters.text_color.stringValue);
+        item.style.color = payload.parameters.text_color.stringValue
+      }
 
-        item.textContent = `${payload.user?.nick | 'no name'}: ${payload.message}`;
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-      })
-      </script>
-      <script>
-        if (localStorage.getItem('textColor')) {
-          document.body.style.color = localStorage.getItem('textColor')
-        }
+      if (payload.fulfillmentMessages.length > 0) {
+        payload.fulfillmentMessages.map(item => {
+          if (item.message === 'quickReplies') {
+            item.quickReplies.quickReplies.map(suggestion=>{
+              console.log(suggestion);
+              const suggestionTag = document.createElement('div');
+              suggestionTag.innerText(suggestion)
+              suggestions.appendChild(suggestionTag);
+            })
+          }
+        })
+      }
+
+      item.textContent = `${payload.user?.nick | 'no name'}: ${payload.message}`;
+      messages.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+    })
+  </script>
+  <script>
+    if (localStorage.getItem('textColor')) {
+      document.body.style.color = localStorage.getItem('textColor')
+    }
   </script>
 </body>
 

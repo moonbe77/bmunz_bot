@@ -94,7 +94,7 @@ io.on('connection', (socket) => {
 
 io.on('connection', (socket) => {
   socket.on('bot', (msg) => {
-    console.log(msg);
+    console.log('Query from Bot',msg);
 
     fetch('http://localhost:5001/bmunz-316708/us-central1/dialogflowGateway', {
       method: 'post',
@@ -113,9 +113,11 @@ io.on('connection', (socket) => {
     })
       .then(data => data.json())
       .then(fullfil => {
+        console.log(fullfil);
         const payload = {
           message: fullfil.fulfillmentText,
-          parameters: fullfil.parameters.fields
+          parameters: fullfil.parameters.fields,
+          fulfillmentMessages: fullfil.fulfillmentMessages
         }
 
         socket.emit('bot', payload);
