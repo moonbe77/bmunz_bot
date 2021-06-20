@@ -26,7 +26,7 @@ function fallback(agent) {
 }
 
 function contactDetails(agent) {
-  agent.add(`Contact Details`);
+  agent.add(`Contact Details List`);
   agent.add(`munzbe@gmail.com`);
   agent.add(`+61 481 129 786`);
   agent.add(`linkedin`);
@@ -85,7 +85,7 @@ exports.dialogflowGateway = functions.https.onRequest((request, response) => {
     const sessionClient = new SessionsClient({ credentials: serviceAccount });
     const session = sessionClient.sessionPath("bmunz-316708", sessionId);
     const responses = await sessionClient.detectIntent({ session, queryInput });
-    console.log(response[0]);
+    console.log(responses[0]);
     const result = responses[0].queryResult;
     result.fulfillmentText;
     response.send(result);
@@ -94,11 +94,11 @@ exports.dialogflowGateway = functions.https.onRequest((request, response) => {
 
 exports.dialogflowHook = functions.https.onRequest((request, response) => {
   const agent = new WebhookClient({ request, response });
-
+  
   let intentMap = new Map();
   intentMap.set('Default Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
-  intentMap.set('contact.details', contactDetails);
+  intentMap.set('contact.details', otherContactCard);
   intentMap.set('contact.card', otherContactCard);
 
   // if (agent.requestSource === agent.ACTIONS_ON_GOOGLE) {
