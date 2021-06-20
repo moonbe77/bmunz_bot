@@ -18,14 +18,19 @@ const linkUrl = 'tel:0481129786';
 function welcome(agent) {
   agent.add(`Welcome to bMunz Bot`);
   agent.add(`I can help you to get Bernardo's contact details`);
+  agent.add(new Suggestion(`change text color!!`));
+  agent.add(new Suggestion(`contact details!!`));
+  agent.add(new Suggestion(`bot stack!!`));
 }
 
 function fallback(agent) {
+  console.info('<<<< fallback agent>>>>');
   agent.add(`I didn't understand`);
   agent.add(`I'm sorry, can you try again?`);
 }
 
 function contactDetails(agent) {
+  console.info('<<<< contact detail agent>>>>');
   agent.add(`Contact Details List`);
   agent.add(`munzbe@gmail.com`);
   agent.add(`+61 481 129 786`);
@@ -63,7 +68,7 @@ function contactDetails(agent) {
 // }
 
 function otherContactCard(agent) {
-  console.info('<<<<< otherContactCard >>>>>');
+  console.info('<<<<< otherContactCard agent>>>>>');
   agent.add(`This message is from Dialogflow's Cloud Functions !`);
   agent.add(new Card({
     title: `Contact Me`,
@@ -85,7 +90,6 @@ exports.dialogflowGateway = functions.https.onRequest((request, response) => {
     const sessionClient = new SessionsClient({ credentials: serviceAccount });
     const session = sessionClient.sessionPath("bmunz-316708", sessionId);
     const responses = await sessionClient.detectIntent({ session, queryInput });
-    console.log(responses[0]);
     const result = responses[0].queryResult;
     result.fulfillmentText;
     response.send(result);
@@ -108,5 +112,3 @@ exports.dialogflowHook = functions.https.onRequest((request, response) => {
   // }
   agent.handleRequest(intentMap);
 })
-
-
