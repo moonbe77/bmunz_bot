@@ -93,6 +93,26 @@
     #users::before {
       content: 'Users: ';
     }
+
+    #suggestions {
+      position: absolute;
+      bottom: 50px;
+      display: flex;
+      flex-direction: row;
+      background-color: lightgrey;
+      gap: 10px;
+      justify-content: center;
+      padding: 5px 0px;
+      width: 100%;
+      padding: 5px 0;
+    }
+
+    .suggestionTag {
+      background-color: pink;
+      border-radius: 50px;
+      border: 1px solid lightsalmon;
+      padding: 2.5px 10px;
+    }
   </style>
 </head>
 
@@ -103,7 +123,7 @@
     <div id="users"></div>
   </div>
   <ul id="messages"></ul>
-    <div id='suggestions'></div>
+  <div id='suggestions'></div>
   <form id="form" action="">
     <input id="input" autocomplete="off" /><button>Send</button>
   </form>
@@ -119,14 +139,18 @@
     var suggestions = document.querySelector('#suggestions');
     users.innerText = " loading users"
 
+    function askToBot(query) {
+      const item = document.createElement('li')
+      item.classList.add('myMessage');
+      item.innerText = query;
+      socket.emit('bot', query);
+      messages.appendChild(item)
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (input.value) {
-        const item = document.createElement('li')
-        item.classList.add('myMessage');
-        item.innerText = input.value;
-        socket.emit('bot', input.value);
-        messages.appendChild(item)
+        askToBot(input.value);
         input.value = '';
       }
     });
@@ -149,6 +173,7 @@
     });
 
     socket.on('bot', function (payload) {
+      console.log(payload);
       var item = document.createElement('li');
       if (payload.parameters?.text_color) {
         console.log(payload.parameters.text_color.stringValue);
@@ -159,10 +184,14 @@
       if (payload.fulfillmentMessages.length > 0) {
         payload.fulfillmentMessages.map(item => {
           if (item.message === 'quickReplies') {
-            item.quickReplies.quickReplies.map(suggestion=>{
-              console.log(suggestion);
+            suggestions.innerHTML = "";
+            item.quickReplies.quickReplies.map(suggestion => {
               const suggestionTag = document.createElement('div');
-              suggestionTag.innerText(suggestion)
+              suggestionTag.addEventListener('click', (e) => {
+                askToBot(e.target.textContent)
+              })
+              suggestionTag.classList.add('suggestionTag')
+              suggestionTag.innerText = suggestion;
               suggestions.appendChild(suggestionTag);
             })
           }
