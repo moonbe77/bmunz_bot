@@ -1,8 +1,10 @@
 /node_modules
+**/*.log
 
 #firebase functions
 /functions/service-account.json
-functions/firebase-debug.log
 
 #firebase cache
 .firebase/
+functions/firebase-debug.log
+bfg.jar
