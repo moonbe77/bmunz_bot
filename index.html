@@ -4,6 +4,7 @@
 <head>
   <title>Socket.IO chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="https://fav.farm/%F0%9F%A4%96" type="image/x-icon">
   <style>
     body {
       margin: 0;
@@ -117,7 +118,6 @@
 </head>
 
 <body>
-
   <div class="stats">
     <div id="connections"></div>
     <div id="users"></div>
@@ -127,6 +127,7 @@
   <form id="form" action="">
     <input id="input" autocomplete="off" /><button>Send</button>
   </form>
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
     var socket = io();
