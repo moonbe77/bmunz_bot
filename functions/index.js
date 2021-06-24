@@ -16,11 +16,12 @@ const logoUrl = 'https://bmunz.dev/figma/bmunz.svg';
 const linkUrl = 'tel:0481129786';
 
 function welcome(agent) {
-  agent.add(`Welcome to bMunz Bot`);
-  agent.add(`I can help you to get Bernardo's contact details`);
+  agent.add(`Welcome to Munz Bot`);
+  agent.add(`I can help you to get to know Bernardo, check the suggestion tag below or ask me something`);
   agent.add(new Suggestion(`change text color!!`));
   agent.add(new Suggestion(`contact details!!`));
   agent.add(new Suggestion(`bot stack!!`));
+  agent.add(new Suggestion(`Hola`));
 }
 
 function fallback(agent) {
@@ -38,38 +39,19 @@ function contactDetails(agent) {
   agent.add(`twitter`);
 }
 
-// function googleAssistantContactCard(agent) {
-//   let conv = agent.conv()
-//   console.log(agent); // Get Actions on Google library conversation object
-//   conv.ask('Please choose an item:'); // Use Actions on Google library to add responses
-//   conv.ask(new Carousel({
-//     title: 'Google Assistant',
-//     items: {
-//       'WorksWithGoogleAssistantItemKey': {
-//         title: 'Works With the Google Assistant',
-//         description: 'If you see this logo, you know it will work with the Google Assistant.',
-//         image: {
-//           url: imageUrl,
-//           accessibilityText: 'Works With the Google Assistant logo',
-//         },
-//       },
-//       'GoogleHomeItemKey': {
-//         title: 'Google Home',
-//         description: 'Google Home is a powerful speaker and voice Assistant.',
-//         image: {
-//           url: imageUrl2,
-//           accessibilityText: 'Google Home'
-//         },
-//       },
-//     },
-//   }));
-//   // Add Actions on Google library responses to your agent's response
-//   agent.add(conv);
-// }
+function saveTextColor(agent) {
+  agent.add(`Did you chose the color XXXXX`);
+  agent.add(new Suggestion(`Yes, save it.`));
+  agent.add(new Suggestion(`No, I want to change it.`));
+}
 
 function otherContactCard(agent) {
   console.info('<<<<< otherContactCard agent>>>>>');
-  agent.add(`This message is from Dialogflow's Cloud Functions !`);
+  agent.add(`Contact Details List`);
+  agent.add(`munzbe@gmail.com`);
+  agent.add(`+61 481 129 786`);
+  agent.add(`linkedin`);
+  agent.add(`twitter`);
   agent.add(new Card({
     title: `Contact Me`,
     imageUrl: logoUrl,
@@ -79,8 +61,9 @@ function otherContactCard(agent) {
   })
   );
   agent.add(new Suggestion(`change text color`));
-  agent.add(new Suggestion(`Suggestion 2`));
+  agent.add(new Suggestion(`Contact Details`));
   agent.add(new Suggestion(`bot stack`));
+  
   agent.context.set({ name: 'followup_welcome', lifespan: 2, parameters: { name: 'toto' } });
 }
 
@@ -104,6 +87,7 @@ exports.dialogflowHook = functions.https.onRequest((request, response) => {
   intentMap.set('Default Fallback Intent', fallback);
   intentMap.set('contact.details', otherContactCard);
   intentMap.set('contact.card', otherContactCard);
+  intentMap.set('save.text.color', saveTextColor);
 
   // if (agent.requestSource === agent.ACTIONS_ON_GOOGLE) {
   //   intentMap.set('contact.card', googleAssistantContactCard);
@@ -111,4 +95,12 @@ exports.dialogflowHook = functions.https.onRequest((request, response) => {
   //   intentMap.set('contact.card', otherContactCard);
   // }
   agent.handleRequest(intentMap);
+})
+
+exports.dummyFunction = functions.https.onRequest((request, response) => {
+  cors(request, response, async function () {
+    console.log(request.body);
+
+    response.send(request.body || "ups!!:(")
+  })
 })
